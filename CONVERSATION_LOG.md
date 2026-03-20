@@ -1,6 +1,6 @@
-# Agent Ads (CPH) — Build Log
+# Agent Ads (PPH) — Build Log
 
-Human-agent collaboration between **Teo** (0xteo) and **Basemate Agent** (OpenClaw/Claude) building Cost-per-Human for The Synthesis hackathon.
+Human-agent collaboration between **Teo** (0xteo) and **Basemate Agent** (OpenClaw/Claude) building Pay-per-Human for The Synthesis hackathon.
 
 ---
 
@@ -10,9 +10,9 @@ Human-agent collaboration between **Teo** (0xteo) and **Basemate Agent** (OpenCl
 
 **Teo:** We need a better name than "Lead Marketplace" — something that clicks instantly.
 
-**Agent:** What about Cost-per-Human? CPH. Like CPC (cost per click) but the unit isn't a click — it's a real human joining your group chat. Agents set a price, Basemate matches intent, agent pays USDC per delivery.
+**Agent:** What about Pay-per-Human? PPH. Like CPC (cost per click) but the unit isn't a click — it's a real human joining your group chat. Agents set a price, Basemate matches intent, agent pays USDC per delivery.
 
-**Teo:** That's it. CPH. Let's go with that.
+**Teo:** That's it. PPH. Let's go with that.
 
 ### Choosing the Payment Stack
 
@@ -34,7 +34,7 @@ We evaluated five approaches for agent-to-agent payments:
 
 ### Building the Plugin System
 
-The agent wrote the entire CPH plugin system in one session:
+The agent wrote the entire PPH plugin system in one session:
 
 - `src/xmtp/plugins/cph.plugin.ts` — Subscription DM flow with state machine (idle → awaiting_interests → awaiting_group → awaiting_price → confirming)
 - `src/discovery/adapters/cph.adapter.ts` — PostgreSQL adapters for `cph_subscriptions`, `cph_deliveries`, `pending_cph_deliveries`
@@ -42,7 +42,7 @@ The agent wrote the entire CPH plugin system in one session:
 - `src/xmtp/core/base.ts` — Outbox drain: 30-second interval processes pending deliveries (add human to group → DM both parties)
 - `src/api/x402.ts` — Express middleware for x402 payment verification
 
-**Agent:** The scorer reuses your existing intent detection — GPT-4o-mini scores each group message against all active CPH subscriptions. Score ≥ 85 = match. This means we get the same quality matching that powers Basemate's regular discovery, just monetized.
+**Agent:** The scorer reuses your existing intent detection — GPT-4o-mini scores each group message against all active PPH subscriptions. Score ≥ 85 = match. This means we get the same quality matching that powers Basemate's regular discovery, just monetized.
 
 TypeScript compiled clean on first pass. No errors.
 
@@ -58,7 +58,7 @@ Then we transferred Basemate's hackathon identity to self-custody:
 - Agent #30380 → `0xb257b5c180b7b2cb80e35d6079abe68d9cf0467f`
 - TX: `0x6e503fff...`
 
-Both agents now have verifiable onchain identities. The CPH plugin gates subscriptions to ERC-8004 registered agents only.
+Both agents now have verifiable onchain identities. The PPH plugin gates subscriptions to ERC-8004 registered agents only.
 
 ---
 
@@ -102,12 +102,12 @@ The first x402 payment attempt failed:
 
 ```
 [07:12:33] 💰 x402: delivery 6 paid, will be fulfilled on next drain cycle
-[07:12:53] ✅ CPH: delivered human to subscription 6 (Onchain Agents Hub)
+[07:12:53] ✅ PPH: delivered human to subscription 6 (Onchain Agents Hub)
 ```
 
 ### Delivery Debugging
 
-**Agent:** First delivery attempt: Basemate tried to add my observer address to the group but it failed — `CPH_TEST_OBSERVER_ADDRESS` was pre-added as a member, causing a "already a member" error.
+**Agent:** First delivery attempt: Basemate tried to add my observer address to the group but it failed — `PPH_TEST_OBSERVER_ADDRESS` was pre-added as a member, causing a "already a member" error.
 
 **Teo:** Removed the env var from Railway. Let's run it clean.
 
@@ -144,11 +144,11 @@ When the human taps "Join group", Basemate receives the intent callback, looks u
 
 ```
 [07:11:13] Human posts in group: "It's wild what is being built with autonomous agents for the Synthesis hackathon"
-[07:11:15] 🎯 Scorer: score=85, match=9dbc8879 — intent matched to CPH subscription #6
-[07:11:15] CPH: queued delivery for sub 6
-[07:11:23] 📨 CPH: notified agent for delivery 6, awaiting x402 payment
+[07:11:15] 🎯 Scorer: score=85, match=9dbc8879 — intent matched to PPH subscription #6
+[07:11:15] PPH: queued delivery for sub 6
+[07:11:23] 📨 PPH: notified agent for delivery 6, awaiting x402 payment
 [07:12:33] 💰 x402: delivery 6 paid via USDC permit on Base
-[07:12:53] ✅ CPH: delivered human to subscription 6 (Onchain Agents Hub)
+[07:12:53] ✅ PPH: delivered human to subscription 6 (Onchain Agents Hub)
 [07:18:48] Human taps inline action: join_dc85eff3_group
 [07:18:56] ✅ Found group "Onchain Agents Hub" — Added user to group
 [07:44:09] Human messages: "Thanks for the invite" — Scorer: score=10, no match (normal chat)
@@ -171,7 +171,7 @@ When the human taps "Join group", Basemate receives the intent callback, looks u
 | `src/api/x402.ts` | Express middleware for x402 USDC payment verification |
 | `x402-claim.mjs` | Client-side x402 payment script (sign permit + send) |
 | `agent.json` | Machine-readable agent manifest (ERC-8004, capabilities, services) |
-| `skills/cph/SKILL.md` | Agent skill doc — how other agents integrate with CPH |
+| `skills/cph/SKILL.md` | Agent skill doc — how other agents integrate with PPH |
 | `agent_log.json` | Structured execution log for hackathon judging |
 
 ## Agent Stack

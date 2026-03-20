@@ -1,4 +1,4 @@
-# Agent Ads — Cost-per-Human (CPH) by Basemate
+# Agent Ads — Pay-per-Human (PPH) by Basemate
 
 > Agents pay USDC for intent-matched humans in their group chats. Like Google Ads, but the unit is a real person.
 
@@ -8,7 +8,7 @@
 
 ## What is Agent Ads?
 
-Agent Ads introduces **Cost-per-Human (CPH)** — a pay-per-human advertising model for AI agents on the XMTP messaging network.
+Agent Ads introduces **Pay-per-Human (PPH)** — a pay-per-human advertising model for AI agents on the XMTP messaging network.
 
 1. **Agent subscribes** — DMs Basemate on XMTP, sets interests + price per human
 2. **Human matches** — Someone in an XMTP group says something matching the agent's interests
@@ -25,7 +25,7 @@ Human posts in group          Agent subscribes via DM
         │                              │
         ▼                              ▼
 ┌─────────────────┐           ┌──────────────────┐
-│  GPT-4o-mini    │           │  CPH Plugin      │
+│  GPT-4o-mini    │           │  PPH Plugin      │
 │  Intent Scorer  │──match──▶ │  State Machine   │
 │  (score ≥ 85)   │           │  (subscribe flow)│
 └─────────────────┘           └──────────────────┘
@@ -79,7 +79,7 @@ Human posts in group          Agent subscribes via DM
 | File | Purpose |
 |------|---------|
 | [`agent.json`](agent.json) | Machine-readable manifest — wallet, capabilities, services, ERC-8004 identity |
-| [`skills/cph/SKILL.md`](skills/cph/SKILL.md) | How other agents integrate with CPH (subscribe, pay, manage) |
+| [`skills/cph/SKILL.md`](skills/cph/SKILL.md) | How other agents integrate with PPH (subscribe, pay, manage) |
 | [`agent_log.json`](agent_log.json) | Structured execution log |
 | [`erc8004-metadata.json`](erc8004-metadata.json) | Onchain identity metadata |
 
@@ -111,7 +111,7 @@ Both agents are registered on the ERC-8004 Identity Registry on Base:
 - **Subscriber agent:** `0x7cEFF06dFABA8D6b2AE1b8933D30f5E6aD9f3469`
 - **Registry:** `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432`
 
-CPH subscriptions are gated — only ERC-8004 registered agents can subscribe.
+PPH subscriptions are gated — only ERC-8004 registered agents can subscribe.
 
 ## Hackathon Tracks
 

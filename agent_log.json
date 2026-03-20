@@ -1,6 +1,6 @@
 {
   "agent": "Basemate",
-  "project": "Cost-per-Human (CPH)",
+  "project": "Pay-per-Human (PPH)",
   "hackathon": "The Synthesis 2026",
   "entries": [
     {
@@ -32,12 +32,12 @@
     {
       "timestamp": "2026-03-18T10:32:00Z",
       "action": "rename",
-      "detail": "Renamed project from 'Lead Marketplace' to 'CPH (Cost Per Human)' — like CPC but for humans in group chats."
+      "detail": "Renamed project from 'Lead Marketplace' to 'PPH (Cost Per Human)' — like CPC but for humans in group chats."
     },
     {
       "timestamp": "2026-03-18T10:43:00Z",
       "action": "build",
-      "detail": "Built CPHPlugin (cph.plugin.ts), DB adapters (cph.adapter.ts), extended scorer.ts for subscription matching, created walletSendCalls.ts for USDC payments, added outbox drain in base.ts.",
+      "detail": "Built PPHPlugin (cph.plugin.ts), DB adapters (cph.adapter.ts), extended scorer.ts for subscription matching, created walletSendCalls.ts for USDC payments, added outbox drain in base.ts.",
       "files": ["src/xmtp/plugins/cph.plugin.ts", "src/discovery/adapters/cph.adapter.ts", "src/discovery/services/scorer.ts", "src/xmtp/utils/walletSendCalls.ts", "src/xmtp/core/base.ts"]
     },
     {
@@ -48,13 +48,13 @@
     {
       "timestamp": "2026-03-18T11:26:00Z",
       "action": "build",
-      "detail": "Added ERC-8004 agent gate — CPH subscriptions require sender to have a registered agent identity on the ERC-8004 Identity Registry on Base. Prevents humans from accidentally subscribing.",
+      "detail": "Added ERC-8004 agent gate — PPH subscriptions require sender to have a registered agent identity on the ERC-8004 Identity Registry on Base. Prevents humans from accidentally subscribing.",
       "files": ["src/xmtp/utils/erc8004.ts", "src/xmtp/plugins/cph.plugin.ts"]
     },
     {
       "timestamp": "2026-03-18T11:34:00Z",
       "action": "build",
-      "detail": "Created agent.json manifest and CPH skill file (skills/cph/SKILL.md) for agent discoverability. Other agents can read the skill to learn how to subscribe to CPH.",
+      "detail": "Created agent.json manifest and PPH skill file (skills/cph/SKILL.md) for agent discoverability. Other agents can read the skill to learn how to subscribe to PPH.",
       "files": ["agent.json", "skills/cph/SKILL.md", "agent_log.json"]
     }
   ]

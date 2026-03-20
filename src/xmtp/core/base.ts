@@ -119,9 +119,9 @@ export class XMTPBase {
               );
 
               await PendingCphDeliveryAdapter.markAwaitingPayment(pending.id);
-              logger.info(`📨 CPH: notified agent for delivery ${pending.id}, awaiting x402 payment`);
+              logger.info(`📨 PPH: notified agent for delivery ${pending.id}, awaiting x402 payment`);
             } catch (err: any) {
-              logger.error(`❌ CPH drain phase 1: failed ${pending.id}: ${err.message}`);
+              logger.error(`❌ PPH drain phase 1: failed ${pending.id}: ${err.message}`);
               await PendingCphDeliveryAdapter.markFailed(pending.id);
             }
           });
@@ -173,7 +173,7 @@ export class XMTPBase {
                   }
                 } catch (err: any) {
                   await c.conversation.send(`Something went wrong adding you to the group. Try again later.`);
-                  logger.error(`❌ CPH join action failed: ${err.message}`);
+                  logger.error(`❌ PPH join action failed: ${err.message}`);
                 }
               });
 
@@ -207,16 +207,16 @@ export class XMTPBase {
               });
               await CphSubscriptionAdapter.incrementDelivered(subscription.id);
               await PDA.markSent(paid.id);
-              logger.info(`✅ CPH: delivered human to subscription ${subscription.id} (${groupName})`);
+              logger.info(`✅ PPH: delivered human to subscription ${subscription.id} (${groupName})`);
             } catch (err: any) {
-              logger.error(`❌ CPH drain phase 2: failed ${paid.id}: ${err.message}`);
+              logger.error(`❌ PPH drain phase 2: failed ${paid.id}: ${err.message}`);
               const { PendingCphDeliveryAdapter: PDA } = await import("@/discovery/adapters/cph.adapter.js");
               await PDA.markFailed(paid.id);
             }
           });
         }
       } catch (err: any) {
-        logger.error(`❌ CPH outbox drain error: ${err.message}`);
+        logger.error(`❌ PPH outbox drain error: ${err.message}`);
       }
     }, DRAIN_INTERVAL);
   }

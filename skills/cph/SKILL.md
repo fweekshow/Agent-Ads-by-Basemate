@@ -1,10 +1,10 @@
-# CPH (Cost-per-Human) — Agent Skill
+# PPH (Pay-per-Human) — Agent Skill
 
-Subscribe to Basemate's CPH service to get intent-matched humans delivered to your XMTP group chat. Pay per delivery in USDC on Base.
+Subscribe to Basemate's PPH service to get intent-matched humans delivered to your XMTP group chat. Pay per delivery in USDC on Base.
 
-## What is CPH?
+## What is PPH?
 
-CPH = Cost Per Human. Like CPC (Cost Per Click) but for real humans in group chats.
+PPH = Cost Per Human. Like CPC (Cost Per Click) but for real humans in group chats.
 
 Basemate monitors 15,000+ users across XMTP group chats on Base app. When someone talks about topics matching your interests, Basemate adds them to your group and charges you a per-delivery fee in USDC.
 
@@ -16,7 +16,7 @@ Basemate monitors 15,000+ users across XMTP group chats on Base app. When someon
 
 ## Step 0: Create Your Group (Required First)
 
-Before you can use CPH, you need an XMTP group chat to receive humans. You must create the group first and **add Basemate as a member** — Basemate needs to be in the group to add matched humans to it.
+Before you can use PPH, you need an XMTP group chat to receive humans. You must create the group first and **add Basemate as a member** — Basemate needs to be in the group to add matched humans to it.
 
 ### Using the XMTP Agent SDK
 
@@ -33,7 +33,7 @@ const group = await client.conversations.newGroup(
   }
 );
 
-// Save this — you'll need it for your CPH subscription
+// Save this — you'll need it for your PPH subscription
 console.log("Group ID:", group.id);
 ```
 
@@ -56,7 +56,7 @@ xmtp conversations create-group \
   --json
 
 # Returns: { "id": "<your-group-id>", ... }
-# Save the group ID for your CPH subscription
+# Save the group ID for your PPH subscription
 ```
 
 You can also add other members or manage the group later:
@@ -78,14 +78,14 @@ xmtp conversation members <group-id>
 ### What Makes a Good Group?
 
 - **Clear name and description** — humans who get added should understand what the group is about
-- **Relevant to your CPH interests** — if you're subscribing to "DeFi" topics, name your group accordingly
+- **Relevant to your PPH interests** — if you're subscribing to "DeFi" topics, name your group accordingly
 - **Active moderation** — you're the admin, keep the group healthy
 
 Once your group is created and Basemate is a member, you're ready to subscribe.
 
 ---
 
-## Step 1: Subscribe to CPH
+## Step 1: Subscribe to PPH
 
 You have two options for subscribing:
 
@@ -151,7 +151,7 @@ xmtp conversation send-text <conversation-id> "status"
 
 | Command | Description |
 |---------|-------------|
-| `subscribe` | Start a new CPH subscription |
+| `subscribe` | Start a new PPH subscription |
 | `status` or `dashboard` | View your active subscriptions and delivery count |
 | `cancel` | Cancel during subscription setup |
 
@@ -227,7 +227,7 @@ You don't need to do anything after subscribing — just pay for deliveries as t
 
 ## ERC-8004 Requirement
 
-CPH subscriptions are gated to registered agents. Your wallet must hold an ERC-8004 identity NFT on the Base Identity Registry:
+PPH subscriptions are gated to registered agents. Your wallet must hold an ERC-8004 identity NFT on the Base Identity Registry:
 
 - **Base Mainnet:** `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432`
 - **Base Sepolia:** `0x8004A818BFB912233c491871b3d84c89A494BD9e`

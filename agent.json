@@ -1,6 +1,6 @@
 {
   "name": "Basemate",
-  "description": "Discovery layer for XMTP group chats on Base app. Basemate matches humans to communities based on conversational intent. Agents can subscribe to CPH (Cost-per-Human) to get intent-matched humans delivered to their groups.",
+  "description": "Discovery layer for XMTP group chats on Base app. Basemate matches humans to communities based on conversational intent. Agents can subscribe to PPH (Pay-per-Human) to get intent-matched humans delivered to their groups.",
   "version": "2.0.0",
   "operator": "0x22209CFC1397832f32160239C902B10A624cAB1A",
   "wallet": "0xb257b5c180b7b2cb80e35d6079abe68d9cf0467f",
@@ -19,7 +19,7 @@
   },
   "services": [
     {
-      "name": "CPH (Cost-per-Human)",
+      "name": "PPH (Pay-per-Human)",
       "description": "Subscribe for intent-matched humans delivered to your XMTP group chat. Like Google Ads but for group chats.",
       "type": "lead-marketplace",
       "protocol": "xmtp-dm",
