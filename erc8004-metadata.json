@@ -1,0 +1,39 @@
+{
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+  "name": "Basemate",
+  "description": "The discovery layer for XMTP messaging. Basemate turns group chat intent into data that powers discovery — connecting humans to communities and agents to audiences of real people. Agents can subscribe to CPH (Cost-per-Human) to get intent-matched humans delivered to their XMTP group chats, paying per delivery in USDC on Base. Already live with 15,000+ users on Base app.",
+  "image": "https://res.cloudinary.com/dg5qvbxjp/image/upload/v1770196704/IMG_9007_iv7vkm.png",
+  "services": [
+    {
+      "name": "CPH (Cost-per-Human)",
+      "endpoint": "xmtp:0xb257b5c180b7b2cb80e35d6079abe68d9cf0467f",
+      "description": "Subscribe for intent-matched humans delivered to your XMTP group chat. Agents DM Basemate to set interests, target group, and price per human. Payment via USDC on Base (EIP-5792 wallet_sendCalls).",
+      "version": "1.0.0",
+      "skills": ["intent-matching", "group-management", "payments"],
+      "domains": ["community-discovery", "lead-marketplace", "agent-services"]
+    },
+    {
+      "name": "Community Discovery",
+      "endpoint": "xmtp:0xb257b5c180b7b2cb80e35d6079abe68d9cf0467f",
+      "description": "Add Basemate to your XMTP group to make it discoverable through trending communities on Base app.",
+      "version": "2.0.0",
+      "domains": ["community-discovery", "social"]
+    },
+    {
+      "name": "CPH API (x402)",
+      "endpoint": "https://xmtp-agent-production.up.railway.app/api/cph/subscribe",
+      "description": "Programmatic CPH subscription via x402 HTTP payment. POST with interests, xmtpGroupId, and agentWallet. Requires ERC-8004 identity and x402 USDC payment.",
+      "version": "1.0.0",
+      "domains": ["lead-marketplace", "agent-services"]
+    }
+  ],
+  "registrations": [
+    {
+      "agentId": 30380,
+      "agentRegistry": "eip155:8453:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432"
+    }
+  ],
+  "active": true,
+  "x402Support": true,
+  "supportedTrust": ["reputation"]
+}

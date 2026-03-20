@@ -1,0 +1,61 @@
+{
+  "agent": "Basemate",
+  "project": "Cost-per-Human (CPH)",
+  "hackathon": "The Synthesis 2026",
+  "entries": [
+    {
+      "timestamp": "2026-03-13T14:22:00Z",
+      "action": "register",
+      "detail": "Registered for The Synthesis hackathon via POST /register. Received ERC-8004 on-chain identity on Base Mainnet.",
+      "txn": "https://basescan.org/tx/0x4c4b94cb110d9ef1ef8bff58190224d71a805644144f2c926a1e5a21dd069fef"
+    },
+    {
+      "timestamp": "2026-03-13T15:00:00Z",
+      "action": "brainstorm",
+      "detail": "Brainstormed hackathon project with human (Teo). Started with generic agent negotiation, narrowed to lead marketplace. Key insight: agents pay Basemate to fill their group chats with intent-matched humans."
+    },
+    {
+      "timestamp": "2026-03-13T15:30:00Z",
+      "action": "spec",
+      "detail": "Wrote hackathon/SPEC.md — full architecture spec for Lead Marketplace including escrow contract, subscription commands, intent matching, and demo agent."
+    },
+    {
+      "timestamp": "2026-03-18T09:22:00Z",
+      "action": "research",
+      "detail": "Evaluated payment options: custom LeadEscrow.sol, Base Commerce Payments Protocol, Coinbase Spend Permissions, x402, AgentKit. Decided to ditch custom contracts."
+    },
+    {
+      "timestamp": "2026-03-18T10:23:00Z",
+      "action": "decision",
+      "detail": "Chose XMTP native payments (EIP-5792 wallet_sendCalls) over x402. Rationale: everything stays in one chat thread (negotiate + pay), renders as native payment cards in Base app, no external HTTP infra needed."
+    },
+    {
+      "timestamp": "2026-03-18T10:32:00Z",
+      "action": "rename",
+      "detail": "Renamed project from 'Lead Marketplace' to 'CPH (Cost Per Human)' — like CPC but for humans in group chats."
+    },
+    {
+      "timestamp": "2026-03-18T10:43:00Z",
+      "action": "build",
+      "detail": "Built CPHPlugin (cph.plugin.ts), DB adapters (cph.adapter.ts), extended scorer.ts for subscription matching, created walletSendCalls.ts for USDC payments, added outbox drain in base.ts.",
+      "files": ["src/xmtp/plugins/cph.plugin.ts", "src/discovery/adapters/cph.adapter.ts", "src/discovery/services/scorer.ts", "src/xmtp/utils/walletSendCalls.ts", "src/xmtp/core/base.ts"]
+    },
+    {
+      "timestamp": "2026-03-18T10:49:00Z",
+      "action": "submit",
+      "detail": "Created draft hackathon submission via Synthesis API. Tracks: Open, ERC-8004, Let the Agent Cook, Agent Services on Base."
+    },
+    {
+      "timestamp": "2026-03-18T11:26:00Z",
+      "action": "build",
+      "detail": "Added ERC-8004 agent gate — CPH subscriptions require sender to have a registered agent identity on the ERC-8004 Identity Registry on Base. Prevents humans from accidentally subscribing.",
+      "files": ["src/xmtp/utils/erc8004.ts", "src/xmtp/plugins/cph.plugin.ts"]
+    },
+    {
+      "timestamp": "2026-03-18T11:34:00Z",
+      "action": "build",
+      "detail": "Created agent.json manifest and CPH skill file (skills/cph/SKILL.md) for agent discoverability. Other agents can read the skill to learn how to subscribe to CPH.",
+      "files": ["agent.json", "skills/cph/SKILL.md", "agent_log.json"]
+    }
+  ]
+}
