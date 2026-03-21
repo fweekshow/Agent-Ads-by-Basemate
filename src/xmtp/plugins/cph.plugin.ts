@@ -16,12 +16,12 @@ import type { CphConversationState, SubscriptionStep } from "@/discovery/adapter
 
 const SUBSCRIPTION_TRIGGERS = ["subscribe", "buy humans", "cph", "lead subscribe"];
 const CONFIRM_TRIGGERS = ["yes", "confirm", "y"];
-const PPH_CACHE_TTL = 30_000;
+const CPH_CACHE_TTL = 30_000;
 let cphSubsCache: { subs: any[]; ts: number } = { subs: [], ts: 0 };
 
-export class PPHPlugin extends XMTPServicePlugin {
+export class CPHPlugin extends XMTPServicePlugin {
   metadata: PluginMetadata = {
-    name: "PPHPlugin",
+    name: "CPHPlugin",
     version: "1.0.0",
     priority: 50,
     description: "Cost Per Human — intent-matched lead delivery for agents",
@@ -43,7 +43,7 @@ export class PPHPlugin extends XMTPServicePlugin {
     await CphSubscriptionAdapter.createTable();
     await CphDeliveryAdapter.createTable();
     await PendingCphDeliveryAdapter.createTable();
-    logger.info("✅ PPHPlugin initialized");
+    logger.info("✅ CPHPlugin initialized");
   }
 
   getActions(): Map<string, ActionHandler> {
@@ -59,7 +59,7 @@ export class PPHPlugin extends XMTPServicePlugin {
     const { CphSubscriptionAdapter } = await import("@/discovery/adapters/cph.adapter.js");
     const subs = await CphSubscriptionAdapter.getByAgentInbox(senderInboxId);
     if (subs.length === 0) {
-      await ctx.conversation.send("No active PPH subscriptions. Say \"subscribe\" to add one.");
+      await ctx.conversation.send("No active CPH subscriptions. Say \"subscribe\" to add one.");
       return;
     }
     const lines = subs.map((s) =>
@@ -67,7 +67,7 @@ export class PPHPlugin extends XMTPServicePlugin {
     );
     const total = subs.reduce((a, s) => a + s.cph_delivered * s.price_per_human, 0);
     await ctx.conversation.send(
-      `Your PPH subscriptions:\n${lines.join("\n")}\n\nTotal USDC to pay: ~$${total.toFixed(2)}`
+      `Your CPH subscriptions:\n${lines.join("\n")}\n\nTotal USDC to pay: ~$${total.toFixed(2)}`
     );
   }
 
@@ -135,7 +135,7 @@ export class PPHPlugin extends XMTPServicePlugin {
       const { isRegisteredAgent } = await import("@/xmtp/utils/erc8004.js");
       if (!(await isRegisteredAgent(wallet))) {
         await ctx.conversation.send(
-          "PPH subscriptions are for registered agents only. Register your agent identity at https://eips.ethereum.org/EIPS/eip-8004"
+          "CPH subscriptions are for registered agents only. Register your agent identity at https://eips.ethereum.org/EIPS/eip-8004"
         );
         return true;
       }
@@ -242,7 +242,7 @@ export class PPHPlugin extends XMTPServicePlugin {
       .then(async ({ CphSubscriptionAdapter, CphDeliveryAdapter, wallet }) => {
         const now = Date.now();
         let subs = cphSubsCache.subs;
-        if (subs.length === 0 || now - cphSubsCache.ts > PPH_CACHE_TTL) {
+        if (subs.length === 0 || now - cphSubsCache.ts > CPH_CACHE_TTL) {
           subs = await CphSubscriptionAdapter.getActive();
           cphSubsCache = { subs, ts: now };
         }
@@ -287,8 +287,8 @@ export class PPHPlugin extends XMTPServicePlugin {
           triggerMessage: messageContent.slice(0, 500),
           matchedInterests: match.detected_interests,
         });
-        logger.info(`🎯 PPH: queued delivery for sub ${match.subscriptionId} (score=${match.score})`);
+        logger.info(`🎯 CPH: queued delivery for sub ${match.subscriptionId} (score=${match.score})`);
       })
-      .catch((err) => logger.error({ err }, "PPH match error"));
+      .catch((err) => logger.error({ err }, "CPH match error"));
   }
 }
