@@ -32,7 +32,7 @@ interface ScoreMessageParams {
   sourceGroupId: string;
 }
 
-/** PPH subscription candidate for intent matching */
+/** CPH subscription candidate for intent matching */
 export interface CphSubscriptionCandidate {
   id: number;
   xmtp_group_id: string;
@@ -198,7 +198,7 @@ Rules:
   }
 }
 
-/** Match a group message against PPH subscriptions. Same intent logic as scoreMessage. */
+/** Match a group message against CPH subscriptions. Same intent logic as scoreMessage. */
 export async function matchMessageToSubscriptions(params: {
   messageContent: string;
   subscriptions: CphSubscriptionCandidate[];
@@ -254,7 +254,7 @@ Rules: Match based on what they're TALKING ABOUT. score >= 75 and suggested_subs
       detected_interests: result.detected_interests || [],
     };
   } catch (err) {
-    console.error("❌ PPH matcher error:", err);
+    console.error("❌ CPH matcher error:", err);
     return null;
   }
 }
