@@ -37,7 +37,7 @@ function _startX402Server(): void {
   const app = express();
   app.use(express.json());
 
-  const cphSetupPrice = process.env.PPH_SETUP_PRICE || "$1.00";
+  const cphSetupPrice = process.env.CPH_SETUP_PRICE || "$1.00";
 
   const claimPriceLookup = async (context: { adapter: { getPath(): string } }) => {
     const path = context.adapter.getPath();
@@ -60,7 +60,7 @@ function _startX402Server(): void {
             network,
             payTo: BASEMATE_WALLET,
           },
-          description: "PPH subscription setup fee",
+          description: "CPH subscription setup fee",
         },
         "POST /api/cph/claim/:deliveryId": {
           accepts: {
@@ -69,7 +69,7 @@ function _startX402Server(): void {
             network,
             payTo: BASEMATE_WALLET,
           },
-          description: "PPH per-human delivery payment",
+          description: "CPH per-human delivery payment",
         },
       },
       resourceServer,
@@ -105,7 +105,7 @@ function _startX402Server(): void {
         agentWallet,
         xmtpGroupId,
         interests,
-        pricePerHuman: parseFloat(process.env.PPH_DEFAULT_PRICE || "0.50"),
+        pricePerHuman: parseFloat(process.env.CPH_DEFAULT_PRICE || "0.50"),
       });
 
       res.json({
