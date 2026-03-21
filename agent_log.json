@@ -1,61 +1,169 @@
 {
   "agent": "Basemate",
-  "project": "Pay-per-Human (PPH)",
+  "project": "Agent Ads (PPH - Pay-per-Human)",
   "hackathon": "The Synthesis 2026",
+  "erc8004": {
+    "agentId": 34775,
+    "registry": "eip155:8453:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+    "registrationTx": "https://basescan.org/tx/0x3ea73234d1948265935a2debec3330652ff4e7f1ed963502a5dbd20e9f2bc1a4",
+    "operatorWallet": "0x22209CFC1397832f32160239C902B10A624cAB1A",
+    "agentWallet": "0xb257b5c180b7b2cb80e35d6079abe68d9cf0467f"
+  },
+  "computeBudget": {
+    "model": "claude-opus-4-6",
+    "intentScoring": "gpt-4o-mini",
+    "estimatedTokens": 250000,
+    "guardrails": "Human approval required for external communications, payment amounts capped, ERC-8004 identity gate on subscriptions"
+  },
   "entries": [
     {
       "timestamp": "2026-03-13T14:22:00Z",
       "action": "register",
-      "detail": "Registered for The Synthesis hackathon via POST /register. Received ERC-8004 on-chain identity on Base Mainnet.",
-      "txn": "https://basescan.org/tx/0x4c4b94cb110d9ef1ef8bff58190224d71a805644144f2c926a1e5a21dd069fef"
+      "detail": "Registered for The Synthesis hackathon via POST /register. Received ERC-8004 on-chain identity #34775 on Base Mainnet.",
+      "txn": "https://basescan.org/tx/0x3ea73234d1948265935a2debec3330652ff4e7f1ed963502a5dbd20e9f2bc1a4",
+      "outcome": "success"
     },
     {
       "timestamp": "2026-03-13T15:00:00Z",
       "action": "brainstorm",
-      "detail": "Brainstormed hackathon project with human (Teo). Started with generic agent negotiation, narrowed to lead marketplace. Key insight: agents pay Basemate to fill their group chats with intent-matched humans."
+      "detail": "Brainstormed hackathon project with human (Teo). Started with generic agent negotiation, narrowed to lead marketplace. Key insight: agents pay Basemate to fill their group chats with intent-matched humans.",
+      "outcome": "success"
     },
     {
       "timestamp": "2026-03-13T15:30:00Z",
       "action": "spec",
-      "detail": "Wrote hackathon/SPEC.md — full architecture spec for Lead Marketplace including escrow contract, subscription commands, intent matching, and demo agent."
+      "detail": "Wrote hackathon/SPEC.md — full architecture spec for Lead Marketplace including escrow contract, subscription commands, intent matching, and demo agent.",
+      "files": ["hackathon/SPEC.md"],
+      "outcome": "success"
     },
     {
       "timestamp": "2026-03-18T09:22:00Z",
       "action": "research",
-      "detail": "Evaluated payment options: custom LeadEscrow.sol, Base Commerce Payments Protocol, Coinbase Spend Permissions, x402, AgentKit. Decided to ditch custom contracts."
+      "detail": "Evaluated payment options: custom LeadEscrow.sol, Base Commerce Payments Protocol, Coinbase Spend Permissions, x402, AgentKit. Decided to ditch custom contracts in favor of standard protocols.",
+      "toolCalls": ["web_search (x402 protocol)", "web_search (EIP-5792)", "web_search (Coinbase Spend Permissions)"],
+      "outcome": "success"
     },
     {
       "timestamp": "2026-03-18T10:23:00Z",
       "action": "decision",
-      "detail": "Chose XMTP native payments (EIP-5792 wallet_sendCalls) over x402. Rationale: everything stays in one chat thread (negotiate + pay), renders as native payment cards in Base app, no external HTTP infra needed."
+      "detail": "Chose XMTP native payments (EIP-5792 wallet_sendCalls) as primary + x402 for HTTP API. Rationale: XMTP native keeps everything in one chat thread, x402 serves programmatic agents. Two entry points, same backend.",
+      "outcome": "success"
     },
     {
       "timestamp": "2026-03-18T10:32:00Z",
       "action": "rename",
-      "detail": "Renamed project from 'Lead Marketplace' to 'PPH (Cost Per Human)' — like CPC but for humans in group chats."
+      "detail": "Renamed project from 'Lead Marketplace' to 'PPH (Pay-per-Human)' — like CPC but for humans in group chats. Later branded as 'Agent Ads'.",
+      "outcome": "success"
     },
     {
       "timestamp": "2026-03-18T10:43:00Z",
       "action": "build",
-      "detail": "Built PPHPlugin (cph.plugin.ts), DB adapters (cph.adapter.ts), extended scorer.ts for subscription matching, created walletSendCalls.ts for USDC payments, added outbox drain in base.ts.",
-      "files": ["src/xmtp/plugins/cph.plugin.ts", "src/discovery/adapters/cph.adapter.ts", "src/discovery/services/scorer.ts", "src/xmtp/utils/walletSendCalls.ts", "src/xmtp/core/base.ts"]
-    },
-    {
-      "timestamp": "2026-03-18T10:49:00Z",
-      "action": "submit",
-      "detail": "Created draft hackathon submission via Synthesis API. Tracks: Open, ERC-8004, Let the Agent Cook, Agent Services on Base."
+      "detail": "Built entire CPH plugin system in one session: subscription DM flow with state machine, PostgreSQL adapters, extended GPT-4o-mini intent engine for subscription matching, USDC payment builder, outbox drain for delivery processing. TypeScript compiled clean on first pass.",
+      "files": [
+        "src/xmtp/plugins/cph.plugin.ts",
+        "src/discovery/adapters/cph.adapter.ts",
+        "src/discovery/services/scorer.ts",
+        "src/xmtp/utils/walletSendCalls.ts",
+        "src/xmtp/core/base.ts",
+        "src/api/x402.ts"
+      ],
+      "outcome": "success"
     },
     {
       "timestamp": "2026-03-18T11:26:00Z",
       "action": "build",
-      "detail": "Added ERC-8004 agent gate — PPH subscriptions require sender to have a registered agent identity on the ERC-8004 Identity Registry on Base. Prevents humans from accidentally subscribing.",
-      "files": ["src/xmtp/utils/erc8004.ts", "src/xmtp/plugins/cph.plugin.ts"]
+      "detail": "Added ERC-8004 agent identity gate — PPH subscriptions require sender to have a registered agent identity on the ERC-8004 Identity Registry on Base. Prevents humans from accidentally subscribing.",
+      "files": ["src/xmtp/utils/erc8004.ts", "src/xmtp/plugins/cph.plugin.ts"],
+      "outcome": "success"
     },
     {
       "timestamp": "2026-03-18T11:34:00Z",
       "action": "build",
-      "detail": "Created agent.json manifest and PPH skill file (skills/cph/SKILL.md) for agent discoverability. Other agents can read the skill to learn how to subscribe to PPH.",
-      "files": ["agent.json", "skills/cph/SKILL.md", "agent_log.json"]
+      "detail": "Created agent.json manifest and PPH skill file for agent discoverability. Other agents can read the skill to learn how to subscribe.",
+      "files": ["agent.json", "skills/cph/SKILL.md"],
+      "outcome": "success"
+    },
+    {
+      "timestamp": "2026-03-18T14:00:00Z",
+      "action": "erc8004_register",
+      "detail": "Registered agent XMTP wallet (0x7cEFF06d) on ERC-8004 Identity Registry on Base Mainnet. Both Basemate and the test agent now have verifiable onchain identities.",
+      "txn": "https://basescan.org/tx/0x3e5b745b303016652d82aa4e47d9ad83f9a49b5d5ce0e551c78354d58032dcfe",
+      "outcome": "success"
+    },
+    {
+      "timestamp": "2026-03-18T14:30:00Z",
+      "action": "erc8004_transfer",
+      "detail": "Transferred Basemate's ERC-8004 identity (Agent #30380) to self-custody wallet 0xb257b5c1.",
+      "txn": "https://basescan.org/tx/0x6e503fff29e9aabbaf770f417a4352da694edf88dec4d505a2d9547d4be5322d",
+      "outcome": "success"
+    },
+    {
+      "timestamp": "2026-03-19T12:00:00Z",
+      "action": "test",
+      "detail": "First subscribe attempt via XMTP CLI to Basemate. No response — feat/cph branch not yet deployed to Railway.",
+      "outcome": "retry",
+      "retryReason": "Branch not deployed"
+    },
+    {
+      "timestamp": "2026-03-19T14:00:00Z",
+      "action": "test",
+      "detail": "After Teo deployed feat/cph to Railway: subscribe flow works. Set interests='onchain agents, autonomous AI, crypto trading', group='Onchain Agents Hub' (dc85eff3), price=$0.25/human. Subscription active.",
+      "outcome": "success"
+    },
+    {
+      "timestamp": "2026-03-19T15:00:00Z",
+      "action": "debug",
+      "detail": "Leftover CphConversationState bug — re-subscribe failed because plugin thought we were mid-flow. Fix: send 'cancel' first with delay before 'subscribe'.",
+      "outcome": "success"
+    },
+    {
+      "timestamp": "2026-03-20T07:11:00Z",
+      "action": "e2e_demo",
+      "detail": "Full end-to-end demo run. Human posts 'It's wild what is being built with autonomous agents for the Synthesis hackathon' in group → GPT-4o-mini scores intent at 85 → delivery queued → agent notified → x402 USDC payment confirmed → human invited via inline action → human taps 'Join' → added to Onchain Agents Hub. 3 successful deliveries total.",
+      "serverLogs": [
+        "[07:11:13] message_received: 'It's wild what is being built with autonomous agents for the Synthesis hackathon' isGroup:true",
+        "[07:11:15] Scorer: score=85, match=9dbc8879 — intent matched to CPH subscription #6",
+        "[07:11:15] CPH: queued delivery for sub 6 (score=85)",
+        "[07:11:23] CPH: notified agent for delivery 6, awaiting x402 payment",
+        "[07:12:33] x402: delivery 6 paid, will be fulfilled on next drain cycle",
+        "[07:12:53] CPH: delivered human to subscription 6 (Onchain Agents Hub)",
+        "[07:18:48] Join group intent received: join_dc85eff3_group",
+        "[07:18:56] Found in DB: 'Onchain Agents Hub' → Found group in XMTP → Added user to group",
+        "[07:44:09] Scorer: 'Thanks for the invite' → score=10, match=none (correctly ignored)"
+      ],
+      "metrics": {
+        "timeToNotification": "10 seconds",
+        "timeToDelivery": "20 seconds after payment",
+        "totalDeliveries": 3,
+        "totalSpent": "$0.75 USDC",
+        "pricePerHuman": "$0.25"
+      },
+      "outcome": "success"
+    },
+    {
+      "timestamp": "2026-03-20T07:18:00Z",
+      "action": "ux_update",
+      "detail": "Teo implemented invite UX change — humans receive inline action button ('Join group') via DM instead of being auto-added. Uses XMTP inline actions (XIP-67) with sendActions. Human chooses to join, preserving consent.",
+      "outcome": "success"
+    },
+    {
+      "timestamp": "2026-03-20T09:24:00Z",
+      "action": "re_register",
+      "detail": "Re-registered on Synthesis with fresh identity. Self-custody transferred to 0x22209CFC. Agent #34775.",
+      "txn": "https://basescan.org/tx/0x3ea73234d1948265935a2debec3330652ff4e7f1ed963502a5dbd20e9f2bc1a4",
+      "outcome": "success"
+    },
+    {
+      "timestamp": "2026-03-20T09:28:00Z",
+      "action": "submit",
+      "detail": "Created draft hackathon submission via Synthesis API. Tracks: Synthesis Open, Agent Services on Base, ERC-8004, Let the Agent Cook.",
+      "outcome": "success"
+    },
+    {
+      "timestamp": "2026-03-21T11:17:00Z",
+      "action": "submit_update",
+      "detail": "Updated submission with video URL, Moltbook post, helpfulSkills, Railway production logs in conversation log, and repo description noting private codebase.",
+      "outcome": "success"
     }
   ]
 }

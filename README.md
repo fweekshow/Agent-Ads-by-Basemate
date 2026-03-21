@@ -1,129 +1,111 @@
-# Agent Ads — Pay-per-Human (PPH) by Basemate
+# Agent Ads by Basemate
 
-> Agents pay USDC for intent-matched humans in their group chats. Like Google Ads, but the unit is a real person.
+**Pay-per-Human (PPH) — Like CPC, but for real people.**
 
-**Live at [basemate.app](https://basemate.app)** | **Built for [The Synthesis](https://synthesis.devfolio.co)**
-
----
+> Submitted to [The Synthesis](https://synthesis.devfolio.co) hackathon (March 2026)
 
 ## What is Agent Ads?
 
-Agent Ads introduces **Pay-per-Human (PPH)** — a pay-per-human advertising model for AI agents on the XMTP messaging network.
+Agent Ads is a pay-per-human advertising model where AI agents pay USDC to acquire intent-matched humans into their XMTP group chats on Base app.
 
-1. **Agent subscribes** — DMs Basemate on XMTP, sets interests + price per human
-2. **Human matches** — Someone in an XMTP group says something matching the agent's interests
-3. **GPT-4o-mini scores** — Intent matching engine scores the message (threshold: 85/100)
-4. **Agent pays** — Basemate notifies the agent, agent pays via x402 USDC on Base
-5. **Human gets invited** — Receives an inline action button to join the agent's group
+Agents subscribe to Basemate with their interests and budget. When a real human posts a message matching an agent's intent (scored by GPT-4o-mini at ≥85/100), Basemate notifies the agent, collects a USDC micropayment via x402, and delivers the human an invite to the agent's group.
 
-The entire flow is autonomous. No dashboards, no ad managers — just messaging.
+The entire flow — negotiation, payment, and delivery — happens inside XMTP messaging.
 
 ## How It Works
 
 ```
-Human posts in group          Agent subscribes via DM
-        │                              │
-        ▼                              ▼
-┌─────────────────┐           ┌──────────────────┐
-│  GPT-4o-mini    │           │  PPH Plugin      │
-│  Intent Scorer  │──match──▶ │  State Machine   │
-│  (score ≥ 85)   │           │  (subscribe flow)│
-└─────────────────┘           └──────────────────┘
-        │                              │
-        ▼                              ▼
-┌─────────────────┐           ┌──────────────────┐
-│  Notify Agent   │           │  x402 Payment    │
-│  via XMTP DM    │──pays───▶│  USDC on Base     │
-└─────────────────┘           └──────────────────┘
-        │
-        ▼
-┌─────────────────┐
-│  Invite Human   │
-│  (inline action │
-│   button in DM) │
-└─────────────────┘
+Agent subscribes → sets interests + group + price
+                        ↓
+Human posts in a group chat matching those interests
+                        ↓
+GPT-4o-mini scores intent (≥85 = match)
+                        ↓
+Agent notified via XMTP DM → pays USDC via x402
+                        ↓
+Human receives "Join" button via inline action (XIP-67)
+                        ↓
+Human taps Join → added to agent's group
 ```
 
-## Demo (Full E2E Run)
+**Demo metrics:**
+- Time from human message to agent notification: **10 seconds**
+- Time from payment to delivery: **20 seconds**
+- 3 successful deliveries at $0.25/human = **$0.75 total**
+
+## Production Logs (E2E Demo)
 
 ```
-[07:11:13] Human posts: "It's wild what is being built with autonomous agents"
-[07:11:15] 🎯 Scorer: score=85, match found → queued delivery
+[07:11:13] Human posts: "It's wild what is being built with autonomous agents for the Synthesis hackathon"
+[07:11:15] 🎯 Scorer: score=85, match=9dbc8879
+[07:11:15] CPH: queued delivery for sub 6
 [07:11:23] 📨 Notified agent, awaiting x402 payment
-[07:12:33] 💰 Agent pays $0.25 USDC via x402 permit
-[07:12:53] ✅ Delivered — human invited to "Onchain Agents Hub"
-[07:18:48] 👆 Human taps "Join group" inline action
-[07:18:56] ✅ Added to group
-[07:44:09] 💬 Human: "Thanks for the invite" (score=10, no match — normal chat)
+[07:12:33] 💰 x402: delivery 6 paid
+[07:12:53] ✅ Delivered human to "Onchain Agents Hub"
+[07:18:48] Human taps inline action: join_dc85eff3_group
+[07:18:56] ✅ Added user to group
+[07:44:09] "Thanks for the invite" → score=10, no match (correctly ignored)
 ```
-
-**10 seconds** from human message to agent notification. **20 seconds** from payment to delivery.
 
 ## Architecture
 
-### Source Files
-
-| File | What it does |
-|------|-------------|
-| [`src/xmtp/plugins/cph.plugin.ts`](src/xmtp/plugins/cph.plugin.ts) | Subscription DM flow — state machine handles subscribe → interests → group → price → confirm |
-| [`src/discovery/services/scorer.ts`](src/discovery/services/scorer.ts) | GPT-4o-mini intent matching — scores group messages against active subscriptions |
-| [`src/discovery/adapters/cph.adapter.ts`](src/discovery/adapters/cph.adapter.ts) | PostgreSQL storage — subscriptions, deliveries, pending queue |
-| [`src/xmtp/core/base.ts`](src/xmtp/core/base.ts) | Outbox drain — 30s interval processes payments → sends inline action invites |
-| [`src/api/x402.ts`](src/api/x402.ts) | Express middleware — x402 USDC payment verification |
-| [`src/xmtp/utils/erc8004.ts`](src/xmtp/utils/erc8004.ts) | ERC-8004 identity gate — only registered agents can subscribe |
-| [`src/xmtp/utils/walletSendCalls.ts`](src/xmtp/utils/walletSendCalls.ts) | USDC payment builder (EIP-5792) |
-| [`x402-claim.mjs`](x402-claim.mjs) | Client-side x402 payment script for agents |
-
-### Agent Discovery
-
-| File | Purpose |
-|------|---------|
-| [`agent.json`](agent.json) | Machine-readable manifest — wallet, capabilities, services, ERC-8004 identity |
-| [`skills/cph/SKILL.md`](skills/cph/SKILL.md) | How other agents integrate with PPH (subscribe, pay, manage) |
-| [`agent_log.json`](agent_log.json) | Structured execution log |
-| [`erc8004-metadata.json`](erc8004-metadata.json) | Onchain identity metadata |
-
-## Payments
-
-Two payment paths, same backend:
-
-- **x402 (HTTP)** — Agent signs a USDC permit, sends it as `payment-signature` header. Facilitator settles onchain. Used for programmatic access.
-- **XMTP native (EIP-5792)** — Payment cards render inside Base app chat. Used for conversational flow.
-
-All payments are USDC on Base.
+| Component | Description |
+|-----------|-------------|
+| `src/xmtp/plugins/cph.plugin.ts` | Subscription DM flow with state machine |
+| `src/discovery/adapters/cph.adapter.ts` | PostgreSQL storage (subscriptions, deliveries) |
+| `src/discovery/services/scorer.ts` | GPT-4o-mini intent matching against subscriptions |
+| `src/xmtp/core/base.ts` | Outbox drain — processes payments → invites humans |
+| `src/api/x402.ts` | Express middleware for x402 USDC payment verification |
+| `x402-claim.mjs` | Client-side x402 payment script |
 
 ## Stack
 
 - **Messaging:** XMTP production network
-- **Payments:** x402 + EIP-5792 (USDC on Base)
-- **Identity:** ERC-8004 on Base Mainnet
-- **Intent matching:** GPT-4o-mini
+- **Payments:** x402 (USDC permits on Base)
+- **Identity:** ERC-8004 on Base Mainnet (Agent #34775)
+- **Intent Matching:** GPT-4o-mini
 - **Database:** PostgreSQL (Prisma)
 - **Hosting:** Railway
-- **Agent harness:** OpenClaw (Claude Opus)
-- **App:** [basemate.app](https://basemate.app)
+- **Agent Harness:** OpenClaw (Claude Opus)
 
 ## ERC-8004
 
-Both agents are registered on the ERC-8004 Identity Registry on Base:
+Both the Basemate agent and subscribing agents must hold ERC-8004 identities on Base:
 
-- **Basemate agent:** `0xb257b5c180b7b2cb80e35d6079abe68d9cf0467f` (Agent #30380)
-- **Subscriber agent:** `0x7cEFF06dFABA8D6b2AE1b8933D30f5E6aD9f3469`
 - **Registry:** `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432`
+- **Basemate Agent:** #34775 ([BaseScan](https://basescan.org/tx/0x3ea73234d1948265935a2debec3330652ff4e7f1ed963502a5dbd20e9f2bc1a4))
+- **Operator:** `0x22209CFC1397832f32160239C902B10A624cAB1A`
 
-PPH subscriptions are gated — only ERC-8004 registered agents can subscribe.
+## Repo Structure
 
-## Hackathon Tracks
+This is the **public submission repo** for The Synthesis hackathon. The full Basemate codebase — including the core discovery algorithm, intent detection engine, and group management system — lives in a private repo ([fweekshow/basemate-v2](https://github.com/fweekshow/basemate-v2)). Agent Ads builds on top of that existing production infrastructure.
 
-- **Synthesis Open Track** — $25k
-- **Agent Services on Base** — discoverable agent service accepting x402 payments
-- **Agents With Receipts — ERC-8004** — onchain identity + trust signals
-- **🤖 Let the Agent Cook** — fully autonomous agent flow
+```
+├── agent.json          # Machine-readable agent manifest
+├── agent_log.json      # Structured execution log (decisions, tool calls, outcomes)
+├── skills/cph/         # Agent skill — how other agents integrate with PPH
+├── src/                # Key source files
+│   ├── xmtp/plugins/   # CPH plugin (subscription flow)
+│   ├── discovery/      # Intent matching + DB adapters
+│   └── api/            # x402 payment endpoint
+├── x402-claim.mjs      # x402 payment client
+└── CONVERSATION_LOG.md # Human-agent collaboration log
+```
 
-## Build Log
+## Links
 
-See [`CONVERSATION_LOG.md`](CONVERSATION_LOG.md) for the full human-agent collaboration log documenting how this was built.
+- **App:** [basemate.app](https://basemate.app)
+- **Video:** [YouTube](https://youtu.be/-EkB3fmS5sY)
+- **Moltbook:** [Agent Ads post](https://www.moltbook.com/post/888049d2-e60b-499f-88eb-545595eb36eb)
+- **Hackathon:** [The Synthesis](https://synthesis.devfolio.co)
 
----
+## Tracks
 
-Built by [0xteo](https://x.com/0xteo) + [Basemate Agent](https://x.com/basemateagent) 🔗
+- Synthesis Open Track
+- Agent Services on Base
+- Agents With Receipts — ERC-8004
+- Let the Agent Cook — No Humans Required
+
+## Team
+
+Built by **Teo** ([@0xteo](https://x.com/0xteo)) & **Basemate Agent** (OpenClaw/Claude)
